@@ -3,6 +3,40 @@ import cv2
 import numpy as np
 
 
+def display_points(frame, boxes):
+    height = frame.shape[0]
+    width = frame.shape[1]
+    node_radius = 10
+    color_node = (0, 255, 0)
+    thickness_node = 20
+
+    blank_image = np.zeros((height,width,3), np.uint8)
+    blank_image[:] = (0,0,0)
+    pts = []
+    for i in range(len(boxes)):
+        mid_x = int(
+            (boxes[i][1] + boxes[i][3]) / 2
+        )
+        mid_y = int(
+            (boxes[i][0] + boxes[i][2]) / 2
+        )
+        pt = np.array([[[mid_y, mid_x]]], dtype="float32")
+        pts.append(pt)
+        wp = [int(mid_y),int(mid_x)]
+        image = cv2.circle(
+            blank_image,
+            (wp[0], wp[1]),
+            node_radius,
+            color_node,
+            thickness_node,
+        )
+    center = (height/2,width/2)    
+    cv2.imshow("person View", image)
+    cv2.waitKey(1)
+    return pts, image 
+
+
+
 def bird_eye_view_plot(frame, pedestrian_boxes, M, scale_w, scale_h):
     frame_h = frame.shape[0]
     frame_w = frame.shape[1]

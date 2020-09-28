@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import time
+import ast
 from utils import *
 
 # Load Yolo
@@ -23,18 +24,25 @@ cap = cv2.VideoCapture('vid_short.mp4')
 mouse_pts = []
 
 
+my_file = open("./test.txt","a+")
 def get_mouse_points(event, x, y, flags, param):
     # Used to mark 4 points on the frame zero of the video that will be warped
     # Used to mark 2 points on the frame zero of the video that are 6 feet away
     global mouseX, mouseY, mouse_pts
     if event == cv2.EVENT_LBUTTONDOWN:
         mouseX, mouseY = x, y
+        file1=open("./test.txt","a")
         cv2.circle(image, (x, y), 10, (0, 255, 255), 10)
         if "mouse_pts" not in globals():
             mouse_pts = []
+        if(len(mouse_pts)==6):
+            file1.write(str(mouse_pts))
+        file1.close()
         mouse_pts.append((x, y))
         print("Point detected")
         print(mouse_pts)
+        
+
 
 scale_w = 1.2 / 2
 scale_h = 4 / 2
@@ -68,10 +76,15 @@ while True:
     # Ask user to mark parallel points and two points 6 feet apart. Order bl, br, tr, tl, p1, p2
         while True:
             image = frame
+            file = open('./test.txt','r')
+            s = file.read()
+            x = ast.literal_eval(s)
+            print(x)
             cv2.imshow("image", image)
             cv2.waitKey(1)
-            if len(mouse_pts) == 7:
+            if len(mouse_pts) == 7 or len(x) == 6:
                 cv2.destroyWindow("image")
+                mouse_pts = x
                 break
             first_frame_display = False
         four_points = mouse_pts
@@ -107,8 +120,8 @@ while True:
             if confidence > 0.5 and class_id == 0:
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
-                w = int(detection[2] * width)
                 h = int(detection[3] * height)
+                w = int(detection[2] * width)
 
                 x = int(center_x - w / 2)
                 y = int(center_y - h / 2)
@@ -143,11 +156,8 @@ while True:
             cv2.putText(frame, label + " " + str(round(confidence, 2)), (x, y + 30), font, 2, color, 1)
 
     if len(pedestrian_boxes) > 0:
-        warped_pts, bird_image = bird_eye_view_plot(
-            frame, boxes, M, scale_w, scale_h
-        )
-        six_feet_violations, ten_feet_violations, pairs = plot_lines_between_nodes(
-            warped_pts, bird_image, d_thresh
+        warped_pts, bird_image = display_points(
+            frame, boxes
         )
 
 

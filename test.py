@@ -1,15 +1,11 @@
 import cv2
 import numpy as np
+import ast
 
-width = 500
-height = 500
+file = open('./test.txt','r')
 
-blank_image = np.zeros(
-    (width, height,3)
-)
+s= file.read()
 
-blank_image[:] = (0,0,0)
-print(blank_image)
+x = ast.literal_eval(s)
 
-cv2.imshow('img',blank_image)
-cv2.waitKey(0)
+print(type(x),x)
