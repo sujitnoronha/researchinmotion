@@ -8,11 +8,9 @@ import ast
 from utils import *
 import tensorflow_hub as hub
 import concurrent.futures
-
 from tensorflow.keras import layers
-
-
 import tensorflow as tf
+
 
 
 # Load Yolo
