@@ -162,7 +162,7 @@ def main():
     input_stream = 0 
 
     mode = Mode(Modes.USER_SPECIFIED)
-    cap = cv2.VideoCapture('vid_short.mp4')
+    cap = cv2.VideoCapture('vid/vid_short.mp4')
     wait_key_time = 1
 
     print("loading model to plugin")
@@ -258,7 +258,7 @@ def main():
             frame1 = train_datagen.standardize(frame1)   
 
             
-            preds = model.predict(np.expand_dims(frame1, axis=0),workers=6,use_multiprocessing=True)[0]
+            preds = model.predict(np.expand_dims(frame1, axis=0),workers=8,use_multiprocessing=True)[0]
             Q.append(preds)
             
 
@@ -289,7 +289,7 @@ def main():
                 put_highlighted_text(frame, fps_message, (15, 20), cv2.FONT_HERSHEY_COMPLEX, 0.75, (200, 10, 10), 2)
             
             if not args.no_show:
-                cv2.imshow("Detection Results", frame)
+                cv2.imshow("Detection Results",frame)
                 key = cv2.waitKey(wait_key_time)
 
                 if key in {ord("q"), ord("Q"), 27}: # ESC key
